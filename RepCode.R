@@ -8,7 +8,9 @@ library(dplyr)
 library(ggplot2)
 library(ggpubr)
 library(tidyr)
-
+#library(devtools) only load if patchwork not installed
+#install_github("thomasp85/patchwork")
+library(patchwork)
 #### set seed ####
 set.seed(2617)
 
@@ -151,6 +153,32 @@ height = 3,
 dpi = 300
 )
 
+
+##################################
+## Range of PCC Thresholds ######
+#################################
+newdf <- data.frame("threshold"= seq(0.01, 0.2, by = 0.01), "no_estimates" = NA)
+
+for(i in 1:nrow(newdf)){
+  newdf$no_estimates[i] <- sum(df1$SE_pcc >= newdf$threshold[i])
+}
+
+newdf$freq <- newdf$no_estimates/18957
+newdf$threshold <- as.factor(newdf$threshold)
+
+ggsave(
+  here("Figures", "Supp_thresholdrange.png"),
+ggplot(aes(x = threshold, y = freq), data = newdf) + 
+  geom_bar(stat = "identity", color = "black") +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  labs(y = "Underpowered (% of estimates)", x = "Value of WLS-FE PCC") +
+  theme_pubclean() + 
+  theme(axis.title = element_text(face = "bold"), text = element_text(size = 12)), 
+width = 8,
+height = 4,
+dpi = 300
+)
+
 ## main estimates
 
 df2 <- df1[df1$main_results..Y.1..N.0. == 1,]
@@ -203,20 +231,6 @@ for(i in 1:nrow(df3)){
   }
 }
 
-sum(df3$powered)/nrow(df3)
-
-ggplot(df3, aes(x = SE_pcc)) +
-  geom_histogram(aes(y = (..count..)/sum(..count..)), bins = 30, color = "black", fill = "gray") +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
-  geom_vline(xintercept = weighted.mean(df3$abs_pcc, df3$precision_sq)/2.8, color = "red", lty = "dashed") +
-  geom_vline(xintercept = weighted.mean(df1$abs_pcc, df1$precision_sq)/2.8, color = "pink", lty = "dashed") +
-  annotate(geom="text", x=(weighted.mean(df3$abs_pcc, df3$precision_sq)/2.8)+.17, y=.21, label="Under-powered estimates") + 
-  geom_segment(x =  weighted.mean(df3$abs_pcc, df3$precision_sq)/2.8, y = .21,
-               xend =  weighted.mean(df3$abs_pcc, df3$precision_sq)/2.8 +.04, yend = .21,
-               lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches"))) +
-  labs(x = "Standard Error of PCC", y = "Percentage of Studies", title = "Experimental") + 
-  theme_pubclean()
-
 # supplemental tables
 
 df4 <- df1[df1$table_loc == "supplement",]
@@ -233,19 +247,6 @@ for(i in 1:nrow(df4)){
   }
 }
 
-sum(df4$powered)/nrow(df4)
-
-ggplot(df4, aes(x = SE_pcc)) +
-  geom_histogram(aes(y = (..count..)/sum(..count..)), bins = 50, color = "black", fill = "gray") +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) + 
-  geom_vline(xintercept = weighted.mean(df4$abs_pcc, df4$precision_sq)/2.8, color = "red", lty = "dashed") +
-  geom_vline(xintercept = weighted.mean(df1$abs_pcc, df1$precision_sq)/2.8, color = "pink", lty = "dashed") +
-  annotate(geom="text", x=(weighted.mean(df4$abs_pcc, df4$precision_sq)/2.8)+.2, y=.35, label="Under-powered estimates") + 
-  geom_segment(x =  weighted.mean(df4$abs_pcc, df4$precision_sq)/2.8, y = .35,
-               xend =  weighted.mean(df4$abs_pcc, df4$precision_sq)/2.8 +.04, yend = .35,
-               lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches"))) +
-  labs(x = "Standard Error of PCC", y = "Percentage of Studies", title = "Observational") + 
-  theme_pubclean()
 
 ####################
 ## Median power ###
@@ -317,7 +318,7 @@ ggsave(here("Figures", "Exaggeration_full.png"),
 ggplot(aes(x = category, y = percentage_of_studies), data = category_counts1) + 
   geom_bar(stat = "identity", color = "black", fill = "gray") + 
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
-  labs(y = "Percentage of Estiamtes", x = "Exaggeration Bias") +
+  labs(y = "Percentage of Estimates", x = "Exaggeration Bias") +
   theme_pubclean() +  theme(text = element_text(size = 14), axis.title = element_text(face = "bold")),
 width = 5,
 height = 3,
@@ -369,68 +370,6 @@ height = 3,
 dpi = 300
 )
 
-df3.p <- df3[df3$powered == 1,]
-df3$WAAP <- weighted.mean(df3.p$abs_pcc, df3.p$precision_sq)
-df3.u <- df3[df3$powered == 0,]
-df3.u$main_pcc_waap_diff = 100*(df3.u$abs_pcc/df3.u$WAAP) 
-df3.u$category <- NA
-# categorize exaggeration bias
-for (i in 1:nrow(df3.u)){
-  if(df3.u$main_pcc_waap_diff[i] < 100){
-    df3.u$category[i] <- "Deflation"
-  }
-  if(df3.u$main_pcc_waap_diff[i] >= 100 & df3.u$main_pcc_waap_diff[i]< 200){
-    df3.u$category[i] <- "0-100%"
-  }
-  if(df3.u$main_pcc_waap_diff[i] > 200){
-    df3.u$category[i] <- "100-300%"
-  }
-}
-
-
-category_counts3 <- plyr::count(df3.u$category)
-names(category_counts3) <- c("category", "frequency")
-category_counts3$percentage_of_studies <- category_counts3$frequency/nrow(df3.u)
-category_counts3$category <- factor(category_counts3$category, 
-                                   levels = c("Deflation", "0-100%", "100-300%"))
-
-ggplot(aes(x = category, y = percentage_of_studies), data = category_counts3) + 
-  geom_bar(stat = "identity", color = "black", fill = "gray") + 
-  scale_y_continuous(labels = scales::percent_format()) +
-  labs(y = "Percentage of Estimates") + 
-  theme_pubclean()
-
-df4.p <- df4[df4$powered == 1,]
-df4$WAAP <- weighted.mean(df4.p$abs_pcc, df4.p$precision_sq)
-df4.u <- df4[df4$powered == 0,]
-df4.u$main_pcc_waap_diff = 100*(df4.u$abs_pcc/df4.u$WAAP) 
-df4.u$category <- NA
-# categorize exaggeration bias
-for (i in 1:nrow(df4.u)){
-  if(df4.u$main_pcc_waap_diff[i] < 100){
-    df4.u$category[i] <- "Deflation"
-  }
-  if(df4.u$main_pcc_waap_diff[i] >= 100 & df4.u$main_pcc_waap_diff[i]< 200){
-    df4.u$category[i] <- "0-100%"
-  }
-  if(df4.u$main_pcc_waap_diff[i] > 200){
-    df4.u$category[i] <- "100-300%"
-  }
-}
-
-
-category_counts4 <- plyr::count(df4.u$category)
-names(category_counts4) <- c("category", "frequency")
-category_counts4$percentage_of_studies <- category_counts4$frequency/nrow(df4.u)
-category_counts4$category <- factor(category_counts4$category, 
-                                   levels = c("Deflation", "0-100%", "100-300%"))
-
-ggplot(aes(x = category, y = percentage_of_studies), data = category_counts4) + 
-  geom_bar(stat = "identity", color = "black", fill = "gray") + 
-  scale_y_continuous(labels = scales::percent_format()) +
-  labs(y = "Percentage of Estimates") + 
-  theme_pubclean()
-
 ######################
 ## p-hacking curves ##
 #####################
@@ -452,6 +391,9 @@ ggplot(data = df1[df1$abs_tstat_sm <10,]) +
                  bins = 1000, fill = "gray") + 
   geom_density(aes(x = abs_tstat_sm, weight = weight_article), color = "black", kernel = "epanechnikov", bw = 0.2) + 
   scale_x_continuous(breaks = c(0,1.96,10)) +
+  geom_segment(x =  1.94, y = .4,
+               xend =  1.94, yend = .2,
+               lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
   theme_pubclean() + 
   labs(title ="Weighted by Article", x= "|t-stat|"),
 width = 5,
@@ -465,12 +407,93 @@ ggsave(here("Figures", "TableWeight_phacking.png"),
                  bins = 1000, fill = "gray") + 
   geom_density(aes(x = abs_tstat_sm, weight = weight_table), color = "black", kernel = "epanechnikov", bw = 0.2) + 
   scale_x_continuous(breaks = c(0,1.96,10)) +
+  geom_segment(x =  1.9, y = .4, xend =  1.9, yend = .25,
+               lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
   theme_pubclean() + theme(text = element_text(size = 14), axis.title = element_text(face = "bold")) + 
-  labs(x = "Selective Reporting of t-statistic", y = "Density"), 
+  labs(x = "t-statistic", y = "Density"), 
   width = 5,
   height = 3,
   dpi = 300
 )
+
+ggsave(here("Figures", "TableWeight_phacking_main.png"),
+       ggplot(data = df1[df1$abs_tstat_sm <10,]) +
+         geom_histogram(aes(x = abs_tstat_sm,  y = ..density.., weight = weight_table), 
+                        bins = 1000, fill = "gray") + 
+         geom_density(aes(x = abs_tstat_sm, weight = weight_table), color = "black", kernel = "epanechnikov", bw = 0.2) + 
+         scale_x_continuous(breaks = c(0,1.96,10)) +
+         geom_segment(x =  1.9, y = .4, xend =  1.9, yend = .25,
+                      lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
+         theme_pubclean() + theme(text = element_text(size = 14), axis.title = element_text(face = "bold")) + 
+         labs(x = "t-statistic", y = "Density"), 
+       width = 5,
+       height = 3,
+       dpi = 300
+)
+gra1 <- ggplot(data = df1[df1$abs_tstat_sm <10,]) +
+  geom_histogram(aes(x = abs_tstat_sm,  y = ..density.., weight = weight_table), 
+                 bins = 1000, fill = "gray") + 
+  geom_density(aes(x = abs_tstat_sm, weight = weight_table), color = "black", kernel = "epanechnikov", bw = 0.2) + 
+  scale_x_continuous(breaks = c(0,1.96,10)) +
+  geom_segment(x =  1.9, y = .4, xend =  1.9, yend = .25,
+               lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
+  theme_pubclean() + theme(text = element_text(size = 12), axis.title = element_text(face = "bold"), plot.title = element_text(hjust = 0.5)) + 
+  labs(x = "t-statistic", y = "Density", title= "All Tables")
+
+ ggplot(data = df2[df2$abs_tstat_sm <10,]) +
+  geom_histogram(aes(x = abs_tstat_sm,  y = ..density.., weight = weight_table), 
+                 bins = 1000, fill = "gray") + 
+  geom_density(aes(x = abs_tstat_sm, weight = weight_table), color = "black", kernel = "epanechnikov", bw = 0.2) + 
+  scale_x_continuous(breaks = c(0,1.96,10)) +
+  geom_segment(x =  1.9, y = .4, xend =  1.9, yend = .25,
+               lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
+  theme_pubclean() + theme(text = element_text(size = 14), axis.title = element_text(face = "bold")) + 
+  labs(x = "t-statistic", y = "Density")
+
+gra2 <- ggplot(data = df3[df3$abs_tstat_sm <10,]) +
+  geom_histogram(aes(x = abs_tstat_sm,  y = ..density.., weight = weight_table), 
+                 bins = 1000, fill = "gray") + 
+  geom_density(aes(x = abs_tstat_sm, weight = weight_table), color = "black", kernel = "epanechnikov", bw = 0.2) + 
+  scale_x_continuous(breaks = c(0,1.96,10)) +
+  geom_segment(x =  1.9, y = .4, xend =  1.9, yend = .25,
+               lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
+  theme_pubclean() + theme(text = element_text(size = 12), axis.title = element_text(face = "bold"), plot.title = element_text(hjust = 0.5)) + 
+  labs(x = "t-statistic", y = "Density", title = "Main Text Tables")
+
+# ggplot(data = df1[df1$abs_tstat_sm <10 & df1$study_type == "experimental",]) +
+#   geom_histogram(aes(x = abs_tstat_sm,  y = ..density.., weight = weight_table), 
+#                  bins = 1000, fill = "gray") + 
+#   geom_density(aes(x = abs_tstat_sm, weight = weight_table), color = "black", kernel = "epanechnikov", bw = 0.2) + 
+#   #scale_x_continuous(breaks = c(0,1.96,10)) +
+#   geom_segment(x =  1.9, y = .4, xend =  1.9, yend = .25,
+#                lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
+#   theme_pubclean() + theme(text = element_text(size = 14), axis.title = element_text(face = "bold")) + 
+#   labs(x = "t-statistic", y = "Density")
+# 
+# ggplot(data = df1[df1$abs_tstat_sm <10 & df1$study_type == "observational",]) +
+#   geom_histogram(aes(x = abs_tstat_sm,  y = ..density.., weight = weight_table), 
+#                  bins = 1000, fill = "gray") + 
+#   geom_density(aes(x = abs_tstat_sm, weight = weight_table), color = "black", kernel = "epanechnikov", bw = 0.2) + 
+#   scale_x_continuous(breaks = c(0,1.96,10)) +
+#   geom_segment(x =  1.9, y = .4, xend =  1.9, yend = .25,
+#                lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
+#   theme_pubclean() + theme(text = element_text(size = 14), axis.title = element_text(face = "bold")) + 
+#   labs(x = "t-statistic", y = "Density")
+
+
+gra3 <- ggplot(data = df1[df1$abs_tstat_sm <10 & df1$table_loc == "supplement",]) +
+  geom_histogram(aes(x = abs_tstat_sm,  y = ..density.., weight = weight_table), 
+                 bins = 1000, fill = "gray") + 
+  geom_density(aes(x = abs_tstat_sm, weight = weight_table), color = "black", kernel = "epanechnikov", bw = 0.2) + 
+  scale_x_continuous(breaks = c(0,1.96,10)) +
+  geom_segment(x =  1.9, y = .6, xend =  1.9, yend = .25,
+               lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
+  theme_pubclean() + theme(text = element_text(size = 12), axis.title = element_text(face = "bold"), plot.title = element_text(hjust = 0.5)) + 
+  labs(x = "t-statistic", y = "Density", title = "Supplement Tables")
+
+
+plots <- gra1/gra2/gra3
+ggsave(here("Figures","phacking.png"), plots + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), height = 10, width = 4, units = "in")
 
 ###################################
 ## Multiple hypothesis testing ##
@@ -482,77 +505,48 @@ names(multhyp)<- c("uid", "journal_id", "first_author", "year_pub", "mult_hyp", 
 sum(multhyp$mult_hyp)/nrow(multhyp) #84.84% of studies use multiple hypothesis testing
 sum(multhyp$corr)/sum(multhyp$mult_hyp) # of those studies that use multiple hypothesis testing, 13.96% use a correction
 
-ggsave(here("Figures", "MultHyp.png"),
-ggplot(aes(x = as.factor(mult_hyp)), data = multhyp) + 
-  geom_bar(aes(fill = as.factor(corr),y = (..count..)/sum(..count..)), color = "black")+
+multhyp$mult_hyp_YN <- "Yes"
+multhyp$mult_hyp_YN[multhyp$mult_hyp == 0] <- "No"
+multhyp$correction <- "Corrected"
+multhyp$correction[multhyp$corr == 0] <- "Not corrected"
+multhyp$correction <- factor(multhyp$correction, levels = c("Not corrected", "Corrected"))
+multhyp$data_avail[multhyp$data_avail == 0] <- "No"
+multhyp$data_avail[multhyp$data_avail == 1] <- "Yes"
+multhyp$code[multhyp$code == 0] <- "No"
+multhyp$code[multhyp$code == 1] <- "Yes"
+gr1 <- ggplot(aes(x = mult_hyp_YN), data = multhyp) + 
+  geom_bar(aes(fill = correction,y = (..count..)/sum(..count..)), color = "black")+
   scale_fill_manual(values = c("white", "gray")) +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 5) +
   labs(x = "Multiple Hypothesis Testing", fill= "Correction Used", y = "Percent of Studies") + 
-  theme_pubclean() +theme(axis.title = element_text(face = "bold")),
-width = 3,
-height = 3,
-dpi = 300
-)
+  theme_pubclean() +theme(axis.title = element_text(face = "bold"), legend.title = element_blank(), 
+                          legend.position = "right")
 
-nrow(multhyp[multhyp$data_avail ==1,])/nrow(multhyp) # 78.51% of studies have data available
-ggsave(here("Figures", "DataAvail.png"),
-ggplot(aes(x = as.factor(data_avail)), data = multhyp) +
-  geom_bar(aes(fill = journal_id, y = (..count..)/sum(..count..)), color = "black") + 
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 10) +
-  scale_fill_brewer(palette = "Dark2") + 
-  labs(x = "Data Available", fill= "Journal", y = "Percent of Studies") + 
-  theme_pubclean() +   
-  theme(axis.title = element_text(face = "bold"), legend.text = element_text(size = 7), 
-        legend.title = element_text(size = 7), legend.key.size = unit(.5, units = "line")),
-width = 3,
-height = 3,
-dpi = 300
-)
-
-nrow(multhyp[multhyp$code ==1,])/nrow(multhyp) # 17.5% of studies have code available
-
-ggsave(here("Figures", "CodeAvail.png"),
-ggplot(aes(x = as.factor(code)), data = multhyp) +
-  geom_bar(aes(fill = journal_id, y = (..count..)/sum(..count..)), color = "black") + 
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 8) +
-  scale_fill_brewer(palette = "Dark2") + 
-  labs(x = "Code Available", fill= "Journal", y = "Percent of Studies") + 
-  theme_pubclean() + 
-  theme(axis.title = element_text(face = "bold"), legend.text = element_text(size = 7), 
-        legend.title = element_text(size = 7), legend.key.size = unit(.5, units = "line")), 
-width = 3,
-height = 3,
-dpi = 300
-)
-
-#### multi-panel figure ####
-gr1 <-ggplot(aes(x = as.factor(mult_hyp)), data = multhyp) + 
-  geom_bar(aes(fill = as.factor(corr),y = (..count..)/sum(..count..)), color = "black")+
-  scale_fill_manual(values = c("white", "gray")) +
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 5) +
-  labs(x = "Multiple Hypothesis Testing", fill= "Correction \nUsed", y = "Percent of Studies") + 
-  theme_pubclean() +theme(axis.title = element_text(face = "bold"))
+nrow(multhyp[multhyp$data_avail =="Yes",])/nrow(multhyp) # 78.51% of studies have data available
 gr2 <- ggplot(aes(x = as.factor(data_avail)), data = multhyp) +
   geom_bar(aes(fill = journal_id, y = (..count..)/sum(..count..)), color = "black") + 
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 10) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 5) +
   scale_fill_brewer(palette = "Dark2") + 
   labs(x = "Data Available", fill= "Journal", y = "Percent of Studies") + 
-  theme_pubclean() +   
-  theme(axis.title = element_text(face = "bold"), legend.text = element_text(size = 7), 
-        legend.title = element_text(size = 7), legend.key.size = unit(.5, units = "line"))
+  theme_pubclean() +  
+  guides(fill = FALSE) +
+  theme(axis.title = element_text(face = "bold"))
+
+nrow(multhyp[multhyp$code =="Yes",])/nrow(multhyp) # 17.5% of studies have code available
+
 gr3 <- ggplot(aes(x = as.factor(code)), data = multhyp) +
   geom_bar(aes(fill = journal_id, y = (..count..)/sum(..count..)), color = "black") + 
-  scale_y_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 8) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 5) +
   scale_fill_brewer(palette = "Dark2") + 
   labs(x = "Code Available", fill= "Journal", y = "Percent of Studies") + 
   theme_pubclean() + 
-  theme(axis.title = element_text(face = "bold"), legend.text = element_text(size = 7), 
-        legend.title = element_text(size = 7), legend.key.size = unit(.5, units = "line"))
-png(here("Figures/mult_pan.png"), width = 4, height = 9, units = "in", res = 300)
-ggarrange(plotlist = list(gr1,gr2,gr3),ncol = 1,nrow =3, legend = "right", labels = c("A", "B", "C"))
-dev.off()
+  theme(axis.title = element_text(face = "bold"), legend.text = element_text(size = 10), 
+        legend.title = element_text(size = 10), legend.key.size = unit(.5, units = "line"), legend.position = "right") 
 
-nrow(multhyp[multhyp$code ==1 & multhyp$data_avail == 1,])/nrow(multhyp)
+plots.mult <- (gr1 + plot_spacer())/(gr2|gr3)
+ggsave(here("Figures","mult_hyptesting.png"), plots.mult + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), height = 6, width = 8, units = "in")
+
+nrow(multhyp[multhyp$code == "Yes" & multhyp$data_avail == "Yes",])/nrow(multhyp)
 
 ggplot(aes(x = include), data = papers[papers$include %in% c("No", "Yes"),]) + 
   geom_bar(aes(fill = journal_id,), color = "black",position = position_dodge()) + 
@@ -617,14 +611,16 @@ Q5 <- as.data.frame(table(survey[,15]))
 Q5$percentage <- Q5$Freq/238
 Q2.clicked <- as.data.frame(table(survey[,c(12,17)]))
 
-ggplot(data = survey) + 
-  geom_histogram(aes(y = Q2), stat = "count", color = "black") +
+q2 <- ggplot(data = survey) + 
+  geom_histogram(aes(x = (..count..)/sum(..count..), y = Q2), stat = "count", color = "black") +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 8) +  
   ylab("What percentage of tests do you think passed \nthe conventional target of 80% power?") +
+  xlab("Percentage of repsondents") +
   theme_pubclean() + 
   theme(axis.title = element_text(face = "bold"), legend.text = element_text(size = 7), 
         legend.title = element_text(size = 7), legend.key.size = unit(.5, units = "line"))
 
-ggplot(data = survey) + 
+q3 <- ggplot(data = survey) + 
   geom_histogram(aes(y = Q3), stat = "count", color = "black") +
   ylab("Do you conduct ecological experiments?") +
   theme_pubclean() + 
@@ -633,16 +629,26 @@ ggplot(data = survey) +
 
 survey$Q4 <- factor(survey$Q4, levels = c("Never", "Less than 25% of the time", "25 - 50% of the time",
                                           "50 - 75% of the time", "75% or more of the time", "Always", "" ))
-ggplot(data = survey[-which(survey$Q4 == ""),]) + 
-  geom_histogram(aes(y = Q4), stat = "count", color = "black") +
+q4 <- ggplot(data = survey[-which(survey$Q4 == ""),]) + 
+  geom_histogram(aes(x = (..count..)/sum(..count..), y = Q4), stat = "count", color = "black") +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 8, limits = c(0,.35)) +  
   ylab("Do you perform power anaylses \nbefore starting a new experiment?") +
+  xlab("Percentage of respondents") +
   theme_pubclean() + 
   theme(axis.title = element_text(face = "bold"), legend.text = element_text(size = 7), 
-        legend.title = element_text(size = 7), legend.key.size = unit(.5, units = "line"))
+        legend.title = element_text(size = 7), legend.key.size = unit(.5, units = "line"),
+        axis.text.y = element_text(angle = 45))
 survey$Q5 <- factor(survey$Q5, levels =c("Graduate Student", "Post-doc", "Faculty", "Researcher outside academia", "Other"))
-ggplot(data = survey) + 
-  geom_histogram(aes(y = Q5), stat = "count", color = "black") +
+q5 <- ggplot(data = survey) + 
+  geom_histogram(aes(x = (..count..)/sum(..count..), y = Q5), stat = "count", color = "black") +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 8) +  
   ylab("Current position") +
+  xlab("Percentage of respondents") +
   theme_pubclean() + 
   theme(axis.title = element_text(face = "bold"), legend.text = element_text(size = 7), 
         legend.title = element_text(size = 7), legend.key.size = unit(.5, units = "line"))
+
+
+png(here("Figures/surv_results.png"), width = 9, height = 6, units = "in", res = 300)
+ggarrange(plotlist = list(q2,q4), ncol = 2, legend = "right", labels = c("A", "B"), widths = c(1,1.25))
+dev.off()

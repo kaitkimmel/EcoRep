@@ -1,6 +1,6 @@
 library(here)
 #### FULL DATASET WITH ESTIMATES
-RepDat <- read.csv(here("Data/RepDataFeb21.csv"), na.strings=c("","NA"))
+RepDat <- read.csv(here("Data/RepDataMar21.csv"), na.strings=c("","NA"))
 RepDat$coefficient <- as.numeric(RepDat$coefficient) #NAs introduced because of coefficients reported as "<0.01" for example
 RepDat$sample_size <- as.numeric(RepDat$sample_size) #NAs where sample size was not assigned because could not determine from paper 
 RepDat$std_error <- as.numeric(RepDat$std_error) #NAs introduced because of error reported as "<0.01" for example
@@ -41,7 +41,6 @@ Kicked_out <- Kicked_out[-which(is.na(Kicked_out$checked)),] #several rows of al
 write.csv(Kicked_out, here("Data/Kicked.csv"))
 
 RepDat <- RepDat[RepDat$Keep == "yes",]
-RepDat <- RepDat[-which(is.na(RepDat$journal_id)),]
 
 ## Converting CI to standard errors
 RepDat$error <- RepDat$std_error
