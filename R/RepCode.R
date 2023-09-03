@@ -24,20 +24,10 @@ df <- read.csv(here("Data", "CleanedDat.csv"))
 papers <- read.csv(here("Data", "CleanedPapers.csv"), row.names = 1)
 # DATA THAT WAS REMOVED FROM THE ESTIMATES FILE AFTER CHECKING
 kicked <- read.csv(here("Data", "Kicked.csv"), row.names = 1)
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 # DATA FROM SURVEY RESULTS NOTE: This data was requested to be removed from the 
 # final manuscript by the Nature Ecology & Evolution Editor and a reviewer
 # The analyses are still in this file, just commented out. Please uncomment them
 # if you wish to see the output.
-<<<<<<< HEAD
-=======
-=======
-# # DATA FROM SURVEY RESULTS
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 # survey <- read.csv(here("Data","RepEco_Survey.csv"))
 
 
@@ -55,15 +45,7 @@ mean(df$sample_size) #2999
 
 
 # Get rid of estimates with SE of 0
-<<<<<<< HEAD
 nrow(df[which(df$std_error == 0),]) #810 estimates with SE of 0
-=======
-<<<<<<< HEAD
-nrow(df[which(df$std_error == 0),]) #810 estimates with SE of 0
-=======
-nrow(df[which(df$std_error == 0),]) #810
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 df <- df[which(df$std_error != 0),]
 # Get rid of coefficients with NA values - these were reported in the manuscripts as <0.001
 df <- df[-which(is.na(df$coefficient)),]
@@ -100,18 +82,9 @@ df$abs_tstat_sm <- abs(df$tstat_sm)
 
 quantile(df$abs_tstat_sm, c(.01,.95,.99))
 
-<<<<<<< HEAD
+## Get rid of entries with t-stats above the 99th percentile = estimates > 96.4,
+# using 97 as the cutoff for simplicity (253 ESTIMATES TOTAL)
 
-## Get rid of entries with t-stats above the 99th percentile = estimates > 96.4,
-# using 97 as the cutoff for simplicity (253 ESTIMATES TOTAL)
-=======
-<<<<<<< HEAD
-## Get rid of entries with t-stats above the 99th percentile = estimates > 96.4,
-# using 97 as the cutoff for simplicity (253 ESTIMATES TOTAL)
-=======
-## Get rid of entries with t-stats above the 99th percentile (253 ESTIMATES TOTAL)
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 nrow(df[df$abs_tstat_sm > 97,])
 df <-df[df$abs_tstat_sm < 97,]
 
@@ -164,14 +137,8 @@ df1$WLS_threshold.60 <- weighted.mean(df1$abs_pcc, df1$precision_sq)/2.21
 df1$powered <- NA
 df1$powered.75 <- NA
 df1$powered.6 <- NA
-<<<<<<< HEAD
+
 # Conventional 80% power
-=======
-<<<<<<< HEAD
-# Conventional 80% power
-=======
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 for(i in 1:nrow(df1)){
   if(df1$SE_pcc[i] <= df1$WLS_threshold[i]){
     df1$powered[i] = 1
@@ -179,21 +146,10 @@ for(i in 1:nrow(df1)){
     df1$powered[i] = 0
   }
 }
-<<<<<<< HEAD
 
 sum(df1$powered)/nrow(df1) # proportion of estimates that make the 80% cutoff - 13.3%
 
 # 75% power
-=======
-<<<<<<< HEAD
-sum(df1$powered)/nrow(df1) # proportion of estimates that make the 80% cutoff - 13.3%
-
-# 75% power
-=======
-sum(df1$powered)/nrow(df1) # proportion of estimates that make the 80% cutoff
-
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 for(i in 1:nrow(df1)){
   if(df1$SE_pcc[i] <= df1$WLS_threshold.75[i]){
     df1$powered.75[i] = 1
@@ -201,15 +157,9 @@ for(i in 1:nrow(df1)){
     df1$powered.75[i] = 0
   }
 }
-<<<<<<< HEAD
+
 
 # 60% power
-=======
-<<<<<<< HEAD
-# 60% power
-=======
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 for(i in 1:nrow(df1)){
   if(df1$SE_pcc[i] <= df1$WLS_threshold.6[i]){
     df1$powered.6[i] = 1
@@ -217,11 +167,7 @@ for(i in 1:nrow(df1)){
     df1$powered.6[i] = 0
   }
 }
-<<<<<<< HEAD
 
-=======
-<<<<<<< HEAD
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 sum(df1$powered.75)/nrow(df1)# proportion of estimates that make the 75% cutoff - 14%
 sum(df1$powered.6)/nrow(df1)# proportion of estimates that make the 60% cutoff - 18%
 
@@ -230,18 +176,7 @@ sum(df1$powered.6)/nrow(df1)# proportion of estimates that make the 60% cutoff -
 ##### Figure 1a ####
 ###################
 # Histogram of SE of PCC to show underpowered estimates
-<<<<<<< HEAD
-=======
-=======
-sum(df1$powered.75)/nrow(df1)# proportion of estimates that make the 75% cutoff
-sum(df1$powered.6)/nrow(df1)# proportion of estimates that make the 60% cutoff
 
-
-####################
-##### Figure 1 ####
-###################
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 f1a <- ggplot(df1, aes(x = SE_pcc)) +
   geom_histogram(aes(y = (..count..)/sum(..count..)), bins = 50,color = "black", fill = "gray") +
   scale_y_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 6) + 
@@ -255,24 +190,10 @@ f1a <- ggplot(df1, aes(x = SE_pcc)) +
     theme_pubclean()+ 
   theme(axis.title = element_text(face = "bold"), text = element_text(size = 12))
 
-
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 #####################
 #####Figure 1b######
 ####################
 # Range of PCC Thresholds - moved to main text for R1 & 4 
-<<<<<<< HEAD
-=======
-=======
-###################################################################
-##### Range of PCC Thresholds - moved to main text for R1 & 4 ######
-###################################################################
-
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 # Create a dataframe 
 newdf <- data.frame("pcc_values"= seq(0.01, 0.3, by = 0.01), "no_estimates" = NA)
 newdf$threshold <- newdf$pcc_values/2.8
@@ -298,15 +219,6 @@ f1b <- ggplot(aes(x = pcc_values, y = freq), data = newdf) +
 
 fig1 <- f1a/f1b
 ggsave(here("Figures","figure1.pdf"), fig1 + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), height = 150, width = 180, units = "mm", dpi = 300)
-<<<<<<< HEAD
-
-=======
-<<<<<<< HEAD
-
-
-=======
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 ################################################
 #### Power analyses for main estimates only ####
 ###############################################
@@ -325,17 +237,8 @@ for(i in 1:nrow(df2)){
   }
 }
 
-<<<<<<< HEAD
 
 sum(df2$powered)/nrow(df2) # 11% reach 80% threshold
-=======
-<<<<<<< HEAD
-sum(df2$powered)/nrow(df2) # 11% reach 80% threshold
-=======
-sum(df2$powered)/nrow(df2)
-
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 
 #############################################################
 #### Power analyses for estimates presented in main text ####
@@ -354,16 +257,8 @@ for(i in 1:nrow(df3)){
     df3$powered[i] = 0
   }
 }
-<<<<<<< HEAD
 
 sum(df3$powered)/nrow(df3) # 18% meet 80% threshold
-=======
-<<<<<<< HEAD
-sum(df3$powered)/nrow(df3) # 18% meet 80% threshold
-=======
-sum(df3$powered)/nrow(df3)
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 
 #############################################################
 #### Power analyses for estimates presented in supp text ####
@@ -383,17 +278,7 @@ for(i in 1:nrow(df4)){
   }
 }
 
-<<<<<<< HEAD
-
 sum(df4$powered)/nrow(df4) #13% meet threshold
-
-=======
-<<<<<<< HEAD
-sum(df4$powered)/nrow(df4) #13% meet threshold
-=======
-sum(df4$powered)/nrow(df4)
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 
 #############################################################
 #### Power analyses for observational study estimates   ####
@@ -411,17 +296,9 @@ for(i in 1:nrow(df5)){
     df5$powered[i] = 0
   }
 }
-<<<<<<< HEAD
 
 sum(df5$powered)/nrow(df5) # 12% meet threshold
 
-=======
-<<<<<<< HEAD
-sum(df5$powered)/nrow(df5) # 12% meet threshold
-=======
-sum(df5$powered)/nrow(df5)
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 #############################################################
 #### Power analyses for experimental study estimates    ####
 ############################################################
@@ -438,27 +315,15 @@ for(i in 1:nrow(df6)){
     df6$powered[i] = 0
   }
 }
-<<<<<<< HEAD
+
 
 sum(df6$powered)/nrow(df6) # 43% meet threshold
-
-=======
-<<<<<<< HEAD
-sum(df6$powered)/nrow(df6) # 43% meet threshold
-=======
-sum(df6$powered)/nrow(df6)
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 
 ######################
 #### Median power ####
 #####################
 #"Median power for a given area of research can then be calculated from the cumulative normal 
 #probability of the difference between 1.96 and the absolute value of an estimate of the true 
-<<<<<<< HEAD
-#effect divided by the median standard error"
-=======
-<<<<<<< HEAD
 #effect divided by the median standard error"
 
 # full 
@@ -484,9 +349,6 @@ WLS_threshold_median = unique(df5$WLS_value)/median(df5$SE_pcc)
 # in experimental studies
 WLS_threshold_median = unique(df6$WLS_value)/median(df6$SE_pcc)
 1-pnorm(1.96-WLS_threshold_median) #68
-=======
-#effect divided by the median standard error
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 
 # full 
 WLS_threshold_median = unique(df1$WLS_value)/median(df1$SE_pcc)
@@ -510,12 +372,8 @@ WLS_threshold_median = unique(df5$WLS_value)/median(df5$SE_pcc)
 
 # in experimental studies
 WLS_threshold_median = unique(df6$WLS_value)/median(df6$SE_pcc)
-<<<<<<< HEAD
 1-pnorm(1.96-WLS_threshold_median) #68
-=======
-1-pnorm(1.96-WLS_threshold_median)
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
+
 
 #############################
 ##### Exaggeration Bias ####
@@ -563,15 +421,7 @@ category_counts1$category <- factor(category_counts1$category,
                                       levels = c("Deflation", "none", "0-100%", "100-300%", "300%+"))
 
 ########################################
-<<<<<<< HEAD
 ##### Figure 2a - Exaggeration Bias #####
-=======
-<<<<<<< HEAD
-##### Figure 2a - Exaggeration Bias #####
-=======
-##### Figure 2 - Exaggeration Bias #####
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 #######################################
 f2a <- ggplot(aes(x = category, y = percentage_of_studies), data = category_counts1) + 
   geom_bar(stat = "identity", color = "black", fill = "gray") + 
@@ -580,22 +430,10 @@ f2a <- ggplot(aes(x = category, y = percentage_of_studies), data = category_coun
   theme_pubclean() +  theme(text = element_text(size = 12), axis.title = element_text(face = "bold"))
 
 
-<<<<<<< HEAD
 
 ###########################################
 #### Figure 2b - Range of WAAP values ####
 ##########################################
-=======
-<<<<<<< HEAD
-###########################################
-#### Figure 2b - Range of WAAP values ####
-##########################################
-=======
-###################################################
-#### Different WAAP values  - Figure 2B ####
-##################################################
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 waapdf<- data.frame("waap_values"= seq(0.01, 0.3, by = 0.01), "no_estimates" = NA)
 # count the number of estimates that would fall into the hypothetical threshold
 for(i in 1:nrow(waapdf)){
@@ -626,18 +464,9 @@ ggsave(here("Figures","figure2.pdf"), fig2 + plot_annotation(tag_levels = 'A') &
 #### p-hacking curves ####
 ##########################
 # curves are plotted several different ways
-<<<<<<< HEAD
 # using 1000 bins and an epanechnikov kernal for plotting
 # Focusing on t-stats <10 to exclude long tail of distribution
 
-=======
-<<<<<<< HEAD
-# using 1000 bins and an epanechnikov kernal for plotting
-# Focusing on t-stats <10 to exclude long tail of distribution
-
-=======
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 # 1. unweighted
 ggplot(data = df1[df1$abs_tstat_sm<10,]) +
   geom_histogram(aes(x = abs_tstat_sm,  y = ..density..), bins = 1000, fill = "gray") + 
@@ -686,14 +515,7 @@ ggplot(data = df1[df1$abs_tstat_sm <10,]) +
 #### Figure 3 graphs ####
 #########################
 
-<<<<<<< HEAD
 # Figure 3c
-=======
-<<<<<<< HEAD
-# Figure 3c
-=======
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 # full sample - weighted by estimates per table per article
 gra1 <- ggplot(data = df1[df1$abs_tstat_sm <10,]) +
   geom_histogram(aes(x = abs_tstat_sm,  y = ..density.., weight = weight_table), 
@@ -720,18 +542,9 @@ gra2 <- ggplot(data = df3[df3$abs_tstat_sm <10,]) +
                lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
   theme_pubclean() + theme(text = element_text(size = 12), axis.title = element_text(face = "bold"), plot.title = element_text(hjust = 0.5)) + 
   labs(x = "t-statistic", y = "Density", title = "Main Text Tables")
-<<<<<<< HEAD
 
 nrow(df3[df3$abs_tstat_sm <10,]) # 2,278
 # Figure 3b
-=======
-<<<<<<< HEAD
-nrow(df3[df3$abs_tstat_sm <10,]) # 2,278
-# Figure 3b
-=======
-nrow(df3[df3$abs_tstat_sm <10,])
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 # estimates in supplemental text - weighted by estimates per table per article
 gra3 <- ggplot(data = df1[df1$abs_tstat_sm <10 & df1$table_loc == "supplement",]) +
   geom_histogram(aes(x = abs_tstat_sm,  y = ..density.., weight = weight_table), 
@@ -743,25 +556,10 @@ gra3 <- ggplot(data = df1[df1$abs_tstat_sm <10 & df1$table_loc == "supplement",]
                lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
   theme_pubclean() + theme(text = element_text(size = 12), axis.title = element_text(face = "bold"), plot.title = element_text(hjust = 0.5)) + 
   labs(x = "t-statistic", y = "Density", title = "Supplement Tables")
-<<<<<<< HEAD
-
-=======
-<<<<<<< HEAD
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 nrow(df1[df1$abs_tstat_sm <10 & df1$table_loc == "supplement",]) #14,672
 
 plots <- gra2/gra3/gra1
 ggsave(here("Figures","figure3.pdf"), plots + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), height = 210, width = 150, units = "mm", dpi = 300)
-<<<<<<< HEAD
-=======
-=======
-nrow(df1[df1$abs_tstat_sm <10 & df1$table_loc == "supplement",])
-
-plots <- gra2/gra3/gra1
-ggsave(here("Figures","phacking.pdf"), plots + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), height = 210, width = 150, units = "mm", dpi = 300)
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
-
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 
 #####################################################################
 ### p-hacking curves for experimental and observational studies ####
@@ -816,41 +614,17 @@ multhyp$code[multhyp$code == 1] <- "Yes"
 multhyp$bayesian[multhyp$bayesian == "Yes"] <- 1
 multhyp$bayesian[multhyp$bayesian == "Yes"] <- 0
 
-<<<<<<< HEAD
 
 nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 0),]) # bayesian no multiple hypothesis = 9
 nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 1),]) # bayesian multiple hypothesis = 21
 nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 1 & multhyp$corr == 1),]) # bayesian multiple hypothesis & correction = 1
-
-=======
-<<<<<<< HEAD
-nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 0),]) # bayesian no multiple hypothesis = 9
-nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 1),]) # bayesian multiple hypothesis = 21
-nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 1 & multhyp$corr == 1),]) # bayesian multiple hypothesis & correction = 1
-=======
-nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 0),]) # bayesian no multiple hypothesis
-nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 1),]) # bayesian multiple hypothesis
-nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 1 & multhyp$corr == 1),]) # bayesian multiple hypothesis & correction
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 
 ###################
 #### Figure 4 ####
 ##################
-<<<<<<< HEAD
 # bar graph with multiple hypothesis testing, yes/no 
 
 ggsave(here("Figures", "figure4.pdf"),
-=======
-<<<<<<< HEAD
-
-# bar graph with multiple hypothesis testing, yes/no 
-
-ggsave(here("Figures", "figure4.pdf"),
-=======
-ggsave(here("Figures", "Multiple_hypothesis_testing.pdf"),
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
        ggplot(aes(x = mult_hyp_YN), data = multhyp) + 
          geom_bar(aes(fill = correction,y = (..count..)/sum(..count..)), color = "black")+
          scale_fill_manual(values = c("white", "gray")) +
@@ -867,14 +641,8 @@ ggsave(here("Figures", "Multiple_hypothesis_testing.pdf"),
 ##################
 #### Figure 5 ####
 ##################
-<<<<<<< HEAD
+
 # percentage of studies with data available Figure 5a
-=======
-<<<<<<< HEAD
-# percentage of studies with data available Figure 5a
-=======
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 nrow(multhyp[multhyp$data_avail =="Yes",])/nrow(multhyp) # 78% of studies have data available
 gr1 <- ggplot(aes(x = as.factor(data_avail)), data = multhyp) +
   geom_bar(aes(fill = journal_id, y = (..count..)/sum(..count..)), color = "black") + 
@@ -885,21 +653,9 @@ gr1 <- ggplot(aes(x = as.factor(data_avail)), data = multhyp) +
   guides(fill = FALSE) +
   theme(axis.title = element_text(face = "bold"))
 
-<<<<<<< HEAD
-
 
 # percentage of studies with code available Figure 5b
 nrow(multhyp[multhyp$code =="Yes",])/nrow(multhyp) # 18% of studies have code available
-=======
-<<<<<<< HEAD
-
-# percentage of studies with code available Figure 5b
-nrow(multhyp[multhyp$code =="Yes",])/nrow(multhyp) # 18% of studies have code available
-=======
-nrow(multhyp[multhyp$code =="Yes",])/nrow(multhyp) # 18% of studies have code available
-
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 gr2 <- ggplot(aes(x = as.factor(code)), data = multhyp) +
   geom_bar(aes(fill = journal_id, y = (..count..)/sum(..count..)), color = "black") + 
   scale_y_continuous(labels = scales::percent_format(accuracy = 1), n.breaks = 6, limits = c(0,.9)) +
@@ -911,16 +667,8 @@ gr2 <- ggplot(aes(x = as.factor(code)), data = multhyp) +
 
 
 plots.mult <- (gr1 + gr2)
-<<<<<<< HEAD
 
 ggsave(here("Figures","figure5.pdf"), plots.mult + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), height = 88, width = 130, units = "mm", dpi = 300)
-=======
-<<<<<<< HEAD
-ggsave(here("Figures","figure5.pdf"), plots.mult + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), height = 88, width = 130, units = "mm", dpi = 300)
-=======
-ggsave(here("Figures","data_code_avail.pdf"), plots.mult + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), height = 88, width = 130, units = "mm", dpi = 300)
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 
 
 nrow(multhyp[multhyp$code == "Yes" & multhyp$data_avail == "Yes",])/nrow(multhyp) # 17.7% of studies with code and data
@@ -1073,16 +821,7 @@ sup2<- ggplot(aes(x = SE_pcc), data = df1) +
   theme_pubclean()
 
 sup <- sup1/sup2
-<<<<<<< HEAD
 ggsave(here("Figures/supplemental_figure.png"), sup + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), dpi = 300)
-
-=======
-<<<<<<< HEAD
-ggsave(here("Figures/supplemental_figure.png"), sup + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), dpi = 300)
-=======
-ggsave(here("Figures/PCC_values_hist.png"), sup + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), dpi = 300)
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 
 
 #####################################################
