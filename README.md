@@ -1,12 +1,16 @@
 ---
 output:
   html_document: default
+
 ---
 # EcoRep
 This R code and data produces the analyses in Kimmel, Avolio, & Ferraro (2023). Please contact kaitlinakimmel@gmail.com for questions regarding the code and data files. See https://osf.io/9yd2b/ for the corresponding Open Science Framework page which also includes a preprint version of the final manuscript.
 
 ## <u>Code</u>
 Note: I used the here::here() function to call my data and save files. The here function makes it so that a new working directory for other users does not have to be set. When setting up the .Rproj create the following folders: "Data", "Figures", and "R". The code should run easily if the folder structure is made within a new project and here() is used. 
+
+## <u>Code</u>
+Note: I used the here::here() function to call my data and save files. The here function makes it so that a new working directory for other users does not have to be set. When setting up the .Rproj create the following folders: "Data", "Figures", and "R". I have a folder "Data" in which all the data is stored. The code should run easily if the folder structure is made within a new project and here() is used. 
 
 + Data will house the data files used in the analysis
 + R will house the code for analysis

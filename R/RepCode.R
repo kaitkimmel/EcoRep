@@ -82,6 +82,7 @@ df$abs_tstat_sm <- abs(df$tstat_sm)
 
 quantile(df$abs_tstat_sm, c(.01,.95,.99))
 
+
 ## Get rid of entries with t-stats above the 99th percentile = estimates > 96.4,
 # using 97 as the cutoff for simplicity (253 ESTIMATES TOTAL)
 nrow(df[df$abs_tstat_sm > 97,])
@@ -144,6 +145,7 @@ for(i in 1:nrow(df1)){
     df1$powered[i] = 0
   }
 }
+
 sum(df1$powered)/nrow(df1) # proportion of estimates that make the 80% cutoff - 13.3%
 
 # 75% power
@@ -154,6 +156,7 @@ for(i in 1:nrow(df1)){
     df1$powered.75[i] = 0
   }
 }
+
 # 60% power
 for(i in 1:nrow(df1)){
   if(df1$SE_pcc[i] <= df1$WLS_threshold.6[i]){
@@ -162,6 +165,7 @@ for(i in 1:nrow(df1)){
     df1$powered.6[i] = 0
   }
 }
+
 sum(df1$powered.75)/nrow(df1)# proportion of estimates that make the 75% cutoff - 14%
 sum(df1$powered.6)/nrow(df1)# proportion of estimates that make the 60% cutoff - 18%
 
@@ -214,7 +218,6 @@ f1b <- ggplot(aes(x = pcc_values, y = freq), data = newdf) +
 fig1 <- f1a/f1b
 ggsave(here("Figures","figure1.pdf"), fig1 + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), height = 150, width = 180, units = "mm", dpi = 300)
 
-
 ################################################
 #### Power analyses for main estimates only ####
 ###############################################
@@ -232,6 +235,7 @@ for(i in 1:nrow(df2)){
     df2$powered[i] = 0
   }
 }
+
 
 sum(df2$powered)/nrow(df2) # 11% reach 80% threshold
 
@@ -252,6 +256,7 @@ for(i in 1:nrow(df3)){
     df3$powered[i] = 0
   }
 }
+
 sum(df3$powered)/nrow(df3) # 18% meet 80% threshold
 
 #############################################################
@@ -272,7 +277,9 @@ for(i in 1:nrow(df4)){
   }
 }
 
+
 sum(df4$powered)/nrow(df4) #13% meet threshold
+
 
 #############################################################
 #### Power analyses for observational study estimates   ####
@@ -290,7 +297,9 @@ for(i in 1:nrow(df5)){
     df5$powered[i] = 0
   }
 }
+
 sum(df5$powered)/nrow(df5) # 12% meet threshold
+
 #############################################################
 #### Power analyses for experimental study estimates    ####
 ############################################################
@@ -307,7 +316,9 @@ for(i in 1:nrow(df6)){
     df6$powered[i] = 0
   }
 }
+
 sum(df6$powered)/nrow(df6) # 43% meet threshold
+
 
 ######################
 #### Median power ####
@@ -393,6 +404,7 @@ f2a <- ggplot(aes(x = category, y = percentage_of_studies), data = category_coun
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
   labs(y = "Percentage of Estimates", x = "Exaggeration Bias") +
   theme_pubclean() +  theme(text = element_text(size = 12), axis.title = element_text(face = "bold"))
+
 
 
 ###########################################
@@ -492,6 +504,7 @@ gra1 <- ggplot(data = df1[df1$abs_tstat_sm <10,]) +
   theme_pubclean() + theme(text = element_text(size = 12), axis.title = element_text(face = "bold"), plot.title = element_text(hjust = 0.5)) + 
   labs(x = "t-statistic", y = "Density", title= "All Tables")
 
+
   nrow(df1[df1$abs_tstat_sm <10,]) #16,950
 # Figure 3a
 # estimates presented in main text - weighted by estimates per table per article
@@ -505,6 +518,7 @@ gra2 <- ggplot(data = df3[df3$abs_tstat_sm <10,]) +
                lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
   theme_pubclean() + theme(text = element_text(size = 12), axis.title = element_text(face = "bold"), plot.title = element_text(hjust = 0.5)) + 
   labs(x = "t-statistic", y = "Density", title = "Main Text Tables")
+
 nrow(df3[df3$abs_tstat_sm <10,]) # 2,278
 # Figure 3b
 # estimates in supplemental text - weighted by estimates per table per article
@@ -518,11 +532,11 @@ gra3 <- ggplot(data = df1[df1$abs_tstat_sm <10 & df1$table_loc == "supplement",]
                lineend = "round", linejoin = "round", size = .5, arrow = arrow(length = unit(0.07, "inches")), color = "red") +
   theme_pubclean() + theme(text = element_text(size = 12), axis.title = element_text(face = "bold"), plot.title = element_text(hjust = 0.5)) + 
   labs(x = "t-statistic", y = "Density", title = "Supplement Tables")
+
 nrow(df1[df1$abs_tstat_sm <10 & df1$table_loc == "supplement",]) #14,672
 
 plots <- gra2/gra3/gra1
 ggsave(here("Figures","figure3.pdf"), plots + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), height = 210, width = 150, units = "mm", dpi = 300)
-
 
 #####################################################################
 ### p-hacking curves for experimental and observational studies ####
@@ -577,14 +591,15 @@ multhyp$code[multhyp$code == 1] <- "Yes"
 multhyp$bayesian[multhyp$bayesian == "Yes"] <- 1
 multhyp$bayesian[multhyp$bayesian == "Yes"] <- 0
 
+
 nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 0),]) # bayesian no multiple hypothesis = 9
 nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 1),]) # bayesian multiple hypothesis = 21
 nrow(multhyp[which(multhyp$bayesian == 1 & multhyp$mult_hyp == 1 & multhyp$corr == 1),]) # bayesian multiple hypothesis & correction = 1
 
+
 ###################
 #### Figure 4 ####
 ##################
-
 # bar graph with multiple hypothesis testing, yes/no 
 
 ggsave(here("Figures", "figure4.pdf"),
@@ -616,6 +631,7 @@ gr1 <- ggplot(aes(x = as.factor(data_avail)), data = multhyp) +
   theme(axis.title = element_text(face = "bold"))
 
 
+
 # percentage of studies with code available Figure 5b
 nrow(multhyp[multhyp$code =="Yes",])/nrow(multhyp) # 18% of studies have code available
 gr2 <- ggplot(aes(x = as.factor(code)), data = multhyp) +
@@ -629,6 +645,7 @@ gr2 <- ggplot(aes(x = as.factor(code)), data = multhyp) +
 
 
 plots.mult <- (gr1 + gr2)
+
 ggsave(here("Figures","figure5.pdf"), plots.mult + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), height = 88, width = 130, units = "mm", dpi = 300)
 
 
@@ -783,6 +800,7 @@ sup2<- ggplot(aes(x = SE_pcc), data = df1) +
 
 sup <- sup1/sup2
 ggsave(here("Figures/supplemental_figure.png"), sup + plot_annotation(tag_levels = 'A') & theme(plot.tag = element_text(face = "bold")), dpi = 300)
+
 
 
 #####################################################
