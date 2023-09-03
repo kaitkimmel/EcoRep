@@ -1,13 +1,12 @@
 ---
 output:
   html_document: default
-  pdf_document: default
 ---
 # EcoRep
-This R code and data produces the analyses in Kimmel, Avolio, & Ferraro (2023). Please contact kaitlinakimmel@gmail.com for questions regarding the code and data files. 
+This R code and data produces the analyses in Kimmel, Avolio, & Ferraro (2023). Please contact kaitlinakimmel@gmail.com for questions regarding the code and data files. See https://osf.io/9yd2b/ for the corresponding Open Science Framework page which also includes a preprint version of the final manuscript.
 
 ## <u>Code</u>
-Note: I used the here::here() function to call my data and save files. The here function makes it so that a new working directory for other users does not have to be set. When setting up the .Rproj create the following folders: "Data", "Figures", and "R". I have a folder "Data" in which all the data is stored. The code should run easily if the folder structure is made within a new project and here() is used. 
+Note: I used the here::here() function to call my data and save files. The here function makes it so that a new working directory for other users does not have to be set. When setting up the .Rproj create the following folders: "Data", "Figures", and "R". The code should run easily if the folder structure is made within a new project and here() is used. 
 
 + Data will house the data files used in the analysis
 + R will house the code for analysis
@@ -15,11 +14,16 @@ Note: I used the here::here() function to call my data and save files. The here 
 
 1. <b> Data_Cleaning.R </b>
  + inputs : RepDataJan23.csv, Paper_trackerFeb21.csv
- + outputs :  Kicked.csv | .csv file of the papers that were removed from the RepDataJan23.csv after checking ; CleanedDat.csv| .csv of the final cleaned RepDataJan23.csv including coefficients; CleanedPapers.csv | .csv of the final cleaned Paper_trackerFeb21.csv
+ + outputs :  
+      + Kicked.csv | .csv file of the papers that were removed from the RepDataJan23.csv after checking ;
+      + CleanedDat.csv| .csv of the final cleaned RepDataJan23.csv including coefficients; 
+      + CleanedPapers.csv | .csv of the final cleaned Paper_trackerFeb21.csv
  + purpose : standarizes columns for data analysis
 2. <b> RepCode.R </b>
  + inputs: CleanedDat.csv, CleanedPapers.csv, Kicked.csv, RepEco_Survey.csv
- + outputs: Figure 1 - Figure 5; Figure S1 & S2 [note Figure S2 is removed from final analysis as required by editor and R4]
+ + outputs: 
+      + Figure 1 - Figure 5 
+      + Figure S1 & S2 [note Figure S2 is removed from final analysis as required by editor and R4]
  + purpose: the code for all the analyses presented in the manuscript. Code is commented throughout to explain the steps and purpose of each section. 
 
 ## <u>Raw Data Inputs</u>
