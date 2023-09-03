@@ -58,7 +58,10 @@ RepDat$initials[which(is.na(RepDat$initials))] <- "UNK"
 # sample size was unclear
 Kicked_out <- RepDat[RepDat$Keep != "yes",]
 Kicked_out$reason <- Kicked_out$Checking.Notes
+<<<<<<< HEAD
 # Standardizing reason for removing data from initial dataset
+=======
+>>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
 Kicked_out$reason[Kicked_out$Checking.Notes == "These values are leave-out-one cross validation, not model coefficients"] <- "Not model coef"
 Kicked_out$reason[Kicked_out$Checking.Notes == "random effects"] <-  "Not model coef"
 Kicked_out$reason[Kicked_out$Checking.Notes == "model selection"] <-  "Not model coef"
@@ -119,7 +122,11 @@ Kicked_out$reason[Kicked_out$Checking.Notes == "does not give n for growth rates
 Kicked_out$reason[Kicked_out$Checking.Notes == "unsure of N - does not give number of saplings or total plots sampled"]  <- "unclear n"
 Kicked_out$reason[Kicked_out$Checking.Notes == "unsure of N"]  <- "unclear n"
 
+<<<<<<< HEAD
 write.csv(Kicked_out, here("Data/Kicked.csv")) # save .csv to use in analysis
+=======
+write.csv(Kicked_out, here("Data/Kicked.csv"))
+>>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
 
 # get the dataframe with all the estimates we are keep
 RepDat <- RepDat[RepDat$Keep == "yes",]
@@ -154,10 +161,15 @@ papers$include[papers$include == "1"] <- "Yes"
 # Fixing typos in journal_id
 papers$journal_id[papers$journal_id == "E "] <- "E"
 papers$journal_id[papers$journal_id == "N "] <- "N"
+<<<<<<< HEAD
 # get necessary columns only
 papers <- papers[,c(1:8)] 
 
 # Standardize reason for removing 
+=======
+papers <- papers[,c(1:8)]
+
+>>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
 papers$reason[papers$reason == "no_tables"] <- "No Tables" 
 papers$reason[papers$reason == "no tables"]<- "No Tables"
 papers$reason[papers$reason == "no tables with error"] <- "No Tables"
@@ -169,6 +181,10 @@ papers$reason[papers$reason == "No table"] <- "No Tables"
 papers$reason[papers$reason == "no table with coefficients"]<- "No Tables"
 papers$reason[papers$reason == "no table"] <- "No Tables"
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
 papers$reason[papers$reason == "paper_type"] <- "Paper Type"
 papers$reason[papers$reason =="paper type"]<- "Paper Type"
 papers$reason[papers$reason =="Paper type"]<- "Paper Type"
@@ -186,6 +202,10 @@ papers$reason[papers$reason == "no table with error"]<- "No Error Reported"
 papers$reason[papers$reason == "No table with error"]<- "No Error Reported"
 papers$reason[papers$resaon == "credible intervals"]<- "No Error Reported"
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
 # save
 write.csv(papers, here("Data/CleanedPapers.csv"))
 
