@@ -706,18 +706,9 @@ gra1 <- ggplot(data = df1[df1$abs_tstat_sm <10,]) +
   theme_pubclean() + theme(text = element_text(size = 12), axis.title = element_text(face = "bold"), plot.title = element_text(hjust = 0.5)) + 
   labs(x = "t-statistic", y = "Density", title= "All Tables")
 
-<<<<<<< HEAD
 
   nrow(df1[df1$abs_tstat_sm <10,]) #16,950
 # Figure 3a
-=======
-<<<<<<< HEAD
-  nrow(df1[df1$abs_tstat_sm <10,]) #16,950
-# Figure 3a
-=======
-  nrow(df1[df1$abs_tstat_sm <10,])
->>>>>>> a02c6229e9e7443ea08d942c67d206bde6e7677c
->>>>>>> 2d9ce82fbbe4ba8c47f80e80e85c2df0f5cbd24a
 # estimates presented in main text - weighted by estimates per table per article
 gra2 <- ggplot(data = df3[df3$abs_tstat_sm <10,]) +
   geom_histogram(aes(x = abs_tstat_sm,  y = ..density.., weight = weight_table), 
